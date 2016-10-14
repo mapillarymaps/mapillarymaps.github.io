@@ -29,8 +29,9 @@
     <!-- leaflet -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0-rc.1/leaflet.js"></script>
 
-    <!-- CARTO core -->
-    <script src="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/cartodb.js"></script>
+    <!-- CARTO core 
+    <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.core.js"></script> --> 
+    <script src="js/cartodb.core.js"></script>
 
     <!-- Main tangram library -->
     <script src="https://mapzen.com/tangram/tangram.min.js"></script>
@@ -70,7 +71,7 @@
 
             /* Add CARTO source and layer to the scene */
             scene.setDataSource('carto', {type: 'MVT', url: tiles});
-            scene.config.layers.tornados = {data: {source: "carto", layer: "layer0"}, draw: {points: {color: "#ffee00", size: "25px"}}};
+            scene.config.layers.spotify_musical_cities = {data: {source: "carto", layer: "layer0"}, draw: {points: {color: "#ffee00", size: "25px"}}};
             scene.updateConfig({rebuild: true});
         });
 
