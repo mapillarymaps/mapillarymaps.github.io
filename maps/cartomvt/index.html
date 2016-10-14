@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CARTO + Tangram + MVT example</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0-rc.3/leaflet.css" />
+
+    <style>
+        body {
+            margin: 0px;
+            border: 0px;
+            padding: 0px;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+        }
+
+    </style>
+  </head>
+
+  <body>
+    <div id="map"></div>
+
+    <!-- leaflet -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0-rc.1/leaflet.js"></script>
+
+    <!-- CARTO core -->
+    <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.core.js"></script>
+
+    <!-- Main tangram library -->
+    <script src="https://mapzen.com/tangram/tangram.min.js"></script>
+
+    <script>
+
+        var map = L.map('map');
+
+        var layer = Tangram.leafletLayer({
+            scene: 'scene.yaml',
+            attribution: '<a href="https://mapzen.com/tangram" target="_blank">Tangram</a> | &copy; OSM contributors | <a href="https://mapzen.com/" target="_blank">Mapzen</a>'
+        });
+
+        var scene = layer.scene;
+
+        layer.addTo(map);
+
+        map.setView([40.70531887544228, -74.00976419448853], 4);
+
+        var cartoLayer = {
+            user_name: "nygeog",
+            sublayers: [
+                {
+                    sql: "SELECT * FROM spotify_musical_cities",
+                    cartocss: "#spotify_musical_cities {}",
+                }
+            ]
+        };
+
+        /* Get the URL for the MVT tile service for this layer */
+        cartodb.Tiles.getTiles(cartoLayer, function(result, err) {
+            var tiles = result.tiles.map(function(tileUrl) {
+                return tileUrl
+                    .replace('{s}', 'a')
+                    .replace(/\.png/, '.mvt');
+            })[0];
+
+            /* Add CARTO source and layer to the scene */
+            scene.setDataSource('carto', {type: 'MVT', url: tiles});
+            scene.config.layers.tornados = {data: {source: "carto", layer: "layer0"}, draw: {points: {color: "#ffee00", size: "25px"}}};
+            scene.updateConfig({rebuild: true});
+        });
+
+    </script>
+
+  </body>
+</html>
